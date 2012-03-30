@@ -1,4 +1,4 @@
-# DocType, TA Control
+# DocType, Trend Analyzer Control
 [
 
 	# These values are common in all dictionaries
@@ -24,9 +24,9 @@
 		'version': 11
 	},
 
-	# DocType, TA Control
+	# DocType, Trend Analyzer Control
 	{
 		'doctype': 'DocType',
-		'name': u'TA Control'
+		'name': u'Trend Analyzer Control'
 	}
 ]

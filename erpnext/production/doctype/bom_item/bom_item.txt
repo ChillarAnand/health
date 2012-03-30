@@ -1,4 +1,4 @@
-# DocType, BOM Material
+# DocType, BOM Item
 [
 
 	# These values are common in all dictionaries
@@ -28,7 +28,7 @@
 	{
 		'doctype': u'DocField',
 		'name': '__common__',
-		'parent': u'BOM Material',
+		'parent': u'BOM Item',
 		'parentfield': u'fields',
 		'parenttype': u'DocType'
 	},
@@ -37,17 +37,17 @@
 	{
 		'doctype': u'DocPerm',
 		'name': '__common__',
-		'parent': u'BOM Material',
+		'parent': u'BOM Item',
 		'parentfield': u'permissions',
 		'parenttype': u'DocType',
 		'read': 1,
 		'role': u'System Manager'
 	},
 
-	# DocType, BOM Material
+	# DocType, BOM Item
 	{
 		'doctype': 'DocType',
-		'name': u'BOM Material'
+		'name': u'BOM Item'
 	},
 
 	# DocPerm
@@ -100,7 +100,7 @@
 		'label': u'BOM No',
 		'oldfieldname': u'bom_no',
 		'oldfieldtype': u'Link',
-		'options': u'Bill Of Materials',
+		'options': u'BOM',
 		'permlevel': 0,
 		'reqd': 0,
 		'search_index': 1,

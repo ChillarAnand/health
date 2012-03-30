@@ -33,7 +33,7 @@ class DocType:
 		self.doclist = doclist
 
 	def autoname(self):
-		last_name = sql("select max(name) from `tabBill Of Materials` where name like 'BOM/%s/%%'" % self.doc.item)
+		last_name = sql("select max(name) from `tabBOM` where name like 'BOM/%s/%%'" % self.doc.item)
 		if last_name:
 			idx = cint(cstr(last_name[0][0]).split('/')[-1]) + 1
 		else:
@@ -111,7 +111,7 @@ class DocType:
 		"""	Get raw material rate as per selected method, if bom exists takes bom cost """
 
 		if arg['bom_no']:
-			bom = sql("""select name, total_cost/quantity as unit_cost from `tabBill Of Materials`
+			bom = sql("""select name, total_cost/quantity as unit_cost from `tabBOM`
 				where is_active = 'Yes' and name = %s""", arg['bom_no'], as_dict=1)
 			rate = bom and bom[0]['unit_cost'] or 0
 		elif arg and (arg['is_purchase_item'] == 'Yes' or arg['is_sub_contracted_item'] == 'Yes'):
@@ -149,7 +149,7 @@ class DocType:
 		""" Uncheck others if current one is selected as default, update default bom in item master"""
 
 		if self.doc.is_default and self.doc.is_active == 'Yes':
-			sql("update `tabBill Of Materials` set is_default = 0 where name != %s and item=%s", (self.doc.name, self.doc.item))
+			sql("update `tabBOM` set is_default = 0 where name != %s and item=%s", (self.doc.name, self.doc.item))
 
 			# update default bom in Item Master
 			sql("update `tabItem` set default_bom = %s where name = %s", (self.doc.name, self.doc.item))
@@ -169,7 +169,7 @@ class DocType:
 
 	def check_active_parent_boms(self):
 		""" Check parent BOM before making it inactive """
-		act_pbom = sql("""select distinct t1.parent from `tabBOM Material` t1, `tabBill Of Materials` t2 
+		act_pbom = sql("""select distinct t1.parent from `tabBOM Item` t1, `tabBOM` t2 
 			where t1.bom_no =%s and t2.name = t1.parent and t2.is_active = 'Yes' 
 			and t2.docstatus = 1 and t1.docstatus =1 """, self.doc.name)
 		if act_pbom and act_pbom[0][0]:
@@ -272,7 +272,7 @@ class DocType:
 
 	def validate_bom_no(self, item, bom_no, idx):
 		"""Validate BOM No of sub-contracted items"""
-		bom = sql("""select name from `tabBill Of Materials` where name = %s and item = %s 
+		bom = sql("""select name from `tabBOM` where name = %s and item = %s 
 			and ifnull(is_active, 'No') = 'Yes'	and docstatus < 2 """, (bom_no, item), as_dict =1)
 		if not bom:
 			msgprint("""Incorrect BOM No: %s against item: %s at row no: %s.
@@ -304,7 +304,7 @@ class DocType:
 		for d in check_list:
 			bom_list, count = [self.doc.name], 0
 			while (len(bom_list) > count ):
-				boms = sql(" select %s from `tabBOM Material` where %s = '%s' " % (d[0], d[1], cstr(bom_list[count])))
+				boms = sql(" select %s from `tabBOM Item` where %s = '%s' " % (d[0], d[1], cstr(bom_list[count])))
 				count = count + 1
 				for b in boms:
 					if b[0] == self.doc.name:
@@ -327,7 +327,7 @@ class DocType:
 		"Add items to Flat BOM table"
 		self.doc.clear_table(self.doclist, 'flat_bom_details', 1)
 		for d in self.cur_flat_bom_items:
-			ch = addchild(self.doc, 'flat_bom_details', 'Flat BOM Detail', 1, self.doclist)
+			ch = addchild(self.doc, 'flat_bom_details', 'BOM Explosion Item', 1, self.doclist)
 			for i in d.keys():
 				ch.fields[i] = d[i]
 			ch.docstatus = is_submit
@@ -340,7 +340,7 @@ class DocType:
 		""" Add all items from Flat BOM of child BOM"""
 
 		child_fb_items = sql("""select item_code, description, stock_uom, qty, rate, amount, parent_bom, mat_detail_no, qty_consumed_per_unit 
-			from `tabFlat BOM Detail` where parent = '%s' and docstatus = 1""" % bom_no, as_dict = 1)
+			from `tabBOM Explosion Item` where parent = '%s' and docstatus = 1""" % bom_no, as_dict = 1)
 		for d in child_fb_items:
 			self.cur_flat_bom_items.append({
 				'item_code'				: d['item_code'], 
@@ -386,7 +386,7 @@ class DocType:
 
 
 	def get_parent_bom_list(self, bom_no):
-		p_bom = sql("select parent from `tabBOM Material` where bom_no = '%s'" % bom_no)
+		p_bom = sql("select parent from `tabBOM Item` where bom_no = '%s'" % bom_no)
 		return p_bom and [i[0] for i in p_bom] or []
 
 
@@ -397,7 +397,7 @@ class DocType:
 
 	def on_cancel(self):
 		# check if used in any other bom
-		par = sql("""select t1.parent from `tabBOM Material` t1, `tabBill Of Materials` t2 
+		par = sql("""select t1.parent from `tabBOM Item` t1, `tabBOM` t2 
 			where t1.parent = t2.name and t1.bom_no = %s and t1.docstatus = 1 and t2.is_active = 'Yes'""", self.doc.name)
 		if par:
 			msgprint("BOM can not be cancelled, as it is a child item in following active BOM %s"% [d[0] for d in par])

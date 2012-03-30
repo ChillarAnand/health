@@ -1,4 +1,4 @@
-# DocType, Bill Of Materials
+# DocType, BOM
 [
 
 	# These values are common in all dictionaries
@@ -44,7 +44,7 @@
 	{
 		'doctype': u'DocField',
 		'name': '__common__',
-		'parent': u'Bill Of Materials',
+		'parent': u'BOM',
 		'parentfield': u'fields',
 		'parenttype': u'DocType'
 	},
@@ -53,16 +53,16 @@
 	{
 		'doctype': u'DocPerm',
 		'name': '__common__',
-		'parent': u'Bill Of Materials',
+		'parent': u'BOM',
 		'parentfield': u'permissions',
 		'parenttype': u'DocType',
 		'read': 1
 	},
 
-	# DocType, Bill Of Materials
+	# DocType, BOM
 	{
 		'doctype': 'DocType',
-		'name': u'Bill Of Materials'
+		'name': u'BOM'
 	},
 
 	# DocPerm
@@ -194,7 +194,7 @@
 
 	# DocField
 	{
-		'description': u'Select name of the project if Bill Of Materials need to be created against any project',
+		'description': u'Select name of the project if BOM need to be created against any project',
 		'doctype': u'DocField',
 		'fieldname': u'project_name',
 		'fieldtype': u'Link',
@@ -303,10 +303,10 @@
 		'doctype': u'DocField',
 		'fieldname': u'bom_materials',
 		'fieldtype': u'Table',
-		'label': u'BOM Material',
+		'label': u'BOM Item',
 		'oldfieldname': u'bom_materials',
 		'oldfieldtype': u'Table',
-		'options': u'BOM Material',
+		'options': u'BOM Item',
 		'permlevel': 0
 	},
 
@@ -414,11 +414,11 @@
 		'fieldname': u'flat_bom_details',
 		'fieldtype': u'Table',
 		'hidden': 1,
-		'label': u'Flat BOM Detail',
+		'label': u'BOM Explosion Item',
 		'no_copy': 1,
 		'oldfieldname': u'flat_bom_details',
 		'oldfieldtype': u'Table',
-		'options': u'Flat BOM Detail',
+		'options': u'BOM Explosion Item',
 		'permlevel': 0,
 		'print_hide': 1
 	},
@@ -455,7 +455,7 @@
 		'fieldtype': u'Link',
 		'label': u'Amended From',
 		'no_copy': 1,
-		'options': u'Receivable Voucher',
+		'options': u'Sales Invoice',
 		'permlevel': 1,
 		'print_hide': 1
 	}

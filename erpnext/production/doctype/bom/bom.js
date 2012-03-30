@@ -117,12 +117,12 @@ var calculate_op_cost = function(doc, dt, dn) {
 
 // Calculate Raw Material Cost
 var calculate_rm_cost = function(doc, dt, dn) {  
-	var rm = getchildren('BOM Material', doc.name, 'bom_materials');
+	var rm = getchildren('BOM Item', doc.name, 'bom_materials');
 	total_rm_cost = 0;
 	for(var i=0;i<rm.length;i++) {
 		amt =  flt(rm[i].rate) * flt(rm[i].qty);
-		set_multiple('BOM Material',rm[i].name, {'amount': amt}, 'bom_materials');
-		set_multiple('BOM Material',rm[i].name, {'qty_consumed_per_unit': flt(rm[i].qty)/flt(doc.quantity)}, 'bom_materials');
+		set_multiple('BOM Item',rm[i].name, {'amount': amt}, 'bom_materials');
+		set_multiple('BOM Item',rm[i].name, {'qty_consumed_per_unit': flt(rm[i].qty)/flt(doc.quantity)}, 'bom_materials');
 		total_rm_cost += amt;
 	}
 	doc.raw_material_cost = total_rm_cost;
@@ -154,6 +154,6 @@ cur_frm.fields_dict['bom_materials'].grid.get_field('item_code').get_query = fun
 
 cur_frm.fields_dict['bom_materials'].grid.get_field('bom_no').get_query = function(doc) {
 	var d = locals[this.doctype][this.docname];
-	return 'SELECT DISTINCT `tabBill Of Materials`.`name`, `tabBill Of Materials`.`remarks` FROM `tabBill Of Materials` WHERE `tabBill Of Materials`.`item` = "' + d.item_code + '" AND `tabBill Of Materials`.`is_active` = "Yes" AND `tabBill Of Materials`.docstatus = 1 AND `tabBill Of Materials`.`name` like "%s" ORDER BY `tabBill Of Materials`.`name` LIMIT 50';
+	return 'SELECT DISTINCT `tabBOM`.`name`, `tabBOM`.`remarks` FROM `tabBOM` WHERE `tabBOM`.`item` = "' + d.item_code + '" AND `tabBOM`.`is_active` = "Yes" AND `tabBOM`.docstatus = 1 AND `tabBOM`.`name` like "%s" ORDER BY `tabBOM`.`name` LIMIT 50';
 }
 

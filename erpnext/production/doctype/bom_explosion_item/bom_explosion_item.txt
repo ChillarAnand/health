@@ -1,4 +1,4 @@
-# DocType, Flat BOM Detail
+# DocType, BOM Explosion Item
 [
 
 	# These values are common in all dictionaries
@@ -30,16 +30,16 @@
 	{
 		'doctype': u'DocField',
 		'name': '__common__',
-		'parent': u'Flat BOM Detail',
+		'parent': u'BOM Explosion Item',
 		'parentfield': u'fields',
 		'parenttype': u'DocType',
 		'permlevel': 0
 	},
 
-	# DocType, Flat BOM Detail
+	# DocType, BOM Explosion Item
 	{
 		'doctype': 'DocType',
-		'name': u'Flat BOM Detail'
+		'name': u'BOM Explosion Item'
 	},
 
 	# DocField

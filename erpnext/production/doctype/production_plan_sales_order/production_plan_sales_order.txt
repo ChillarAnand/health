@@ -1,4 +1,4 @@
-# DocType, PP SO Detail
+# DocType, Production Plan Sales Order
 [
 
 	# These values are common in all dictionaries
@@ -29,7 +29,7 @@
 	{
 		'doctype': u'DocField',
 		'name': '__common__',
-		'parent': u'PP SO Detail',
+		'parent': u'Production Plan Sales Order',
 		'parentfield': u'fields',
 		'parenttype': u'DocType'
 	},
@@ -38,17 +38,17 @@
 	{
 		'doctype': u'DocPerm',
 		'name': '__common__',
-		'parent': u'PP SO Detail',
+		'parent': u'Production Plan Sales Order',
 		'parentfield': u'permissions',
 		'parenttype': u'DocType',
 		'read': 1,
 		'role': u'System Manager'
 	},
 
-	# DocType, PP SO Detail
+	# DocType, Production Plan Sales Order
 	{
 		'doctype': 'DocType',
-		'name': u'PP SO Detail'
+		'name': u'Production Plan Sales Order'
 	},
 
 	# DocPerm

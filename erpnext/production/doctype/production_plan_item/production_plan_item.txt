@@ -1,4 +1,4 @@
-# DocType, PP Detail
+# DocType, Production Plan Item
 [
 
 	# These values are common in all dictionaries
@@ -29,15 +29,15 @@
 	{
 		'doctype': u'DocField',
 		'name': '__common__',
-		'parent': u'PP Detail',
+		'parent': u'Production Plan Item',
 		'parentfield': u'fields',
 		'parenttype': u'DocType'
 	},
 
-	# DocType, PP Detail
+	# DocType, Production Plan Item
 	{
 		'doctype': 'DocType',
-		'name': u'PP Detail'
+		'name': u'Production Plan Item'
 	},
 
 	# DocField
@@ -75,7 +75,7 @@
 		'label': u'BOM No',
 		'oldfieldname': u'bom_no',
 		'oldfieldtype': u'Link',
-		'options': u'Bill Of Materials',
+		'options': u'BOM',
 		'permlevel': 0,
 		'reqd': 1,
 		'width': u'100px'
