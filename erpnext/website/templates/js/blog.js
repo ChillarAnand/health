@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-pscript.onload_blog = function(wrapper) {
-	wrapper.blog_list = new wn.ui.Listing({
+// js inside blog page
+wn.pages['{{ name }}'].onload = function(wrapper) {
+	erpnext.blog_list = new wn.ui.Listing({
 		parent: $(wrapper).find('#blog-list').get(0),
 		query: 'select tabBlog.name, title, left(content, 1000) as content, tabBlog.creation, \
 			ifnull(first_name, "") as first_name, ifnull(last_name, "") as last_name \
@@ -26,34 +26,18 @@ pscript.onload_blog = function(wrapper) {
 		hide_refresh: true,
 		no_toolbar: true,
 		render_row: function(parent, data) {
-			if(data.content && data.content.length==1000) data.content += '... (read on)';
+			if(data.content && data.content.length==1000) {
+				data.content += repl('... <a href="%(name)s.html">(read on)</a>', data);
+			}
 			data.content = wn.markdown(data.content);
 			if(data.last_name) data.last_name = ' ' + data.last_name;
 			data.date = prettyDate(data.creation);
-			parent.innerHTML = repl('<h2>%(title)s</h2>\
+			parent.innerHTML = repl('<h2><a href="%(name)s.html">%(title)s</a></h2>\
 				<p><div class="help">By %(first_name)s%(last_name)s, %(date)s</div></p>\
-				<p>%(content)s</p>\
-				<a href="%(name)s.html">Read Full Text</a><br>', data);
+				<p>%(content)s</p><br>', data)
+				//<a href="%(name)s.html">Read Full Text</a><br>', data);
 		},
 		page_length: 10
 	});
-	wrapper.blog_list.run();
-	
-	// subscribe button
-	$('#blog-subscribe').click(function() {
-		var email = $(wrapper).find('input[name="blog-subscribe"]').val();
-		if(!validate_email(email)) {
-			msgprint('Please enter a valid email!');
-		}
-		wn.call({
-			module:'website',
-			page:'blog',
-			method:'subscribe',
-			args:email,
-			btn: this,
-			callback: function() {
-				$(wrapper).find('input[name="blog-subscribe"]').val('');
-			}
-		});		
-	})
+	erpnext.blog_list.run();
 }
