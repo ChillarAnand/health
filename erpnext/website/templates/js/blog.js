@@ -14,17 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-erpnext.make_product_categories = function(wrapper) {
-	wrapper.category_list = new wn.ui.Listing({
-		parent: $(wrapper).find('.more-categories').get(0),
-		query: 'select count(name) as items, item_group \
-			from tabItem where is_sales_item="Yes" \
-			group by item_group order by items desc',
+// js inside blog page
+wn.pages['{{ name }}'].onload = function(wrapper) {
+	erpnext.blog_list = new wn.ui.Listing({
+		parent: $(wrapper).find('#blog-list').get(0),
+		method: 'website.blog.get_blog_list',
 		hide_refresh: true,
+		no_toolbar: true,
 		render_row: function(parent, data) {
-			parent.innerHTML = repl('<a href="#!products/%(item_group)s">%(item_group)s</a> (%(items)s)', 
-				data);
-		}
+			if(data.content && data.content.length==1000) {
+				data.content += repl('... <a href="%(name)s.html">(read on)</a>', data);
+			}
+			parent.innerHTML = repl('<h2><a href="%(name)s.html">%(title)s</a></h2>\
+				%(content)s<br /><br />', data);
+		},
+		page_length: 10
 	});
-	wrapper.category_list.run();	
+	erpnext.blog_list.run();
 }
