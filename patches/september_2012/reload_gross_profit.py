@@ -15,16 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
-
-import webnotes
-
-def get_fiscal_year_from_date(date):
-	from webnotes.utils import formatdate
-	fy = webnotes.conn.sql("""select name from `tabFiscal Year`
-		where %s between year_start_date and adddate(year_start_date, 
-		interval 1 year)""", date)
-	
-	if not fy:
-		webnotes.msgprint("""%s not in any Fiscal Year""" % formatdate(date), raise_exception=1)
-	
-	return fy[0][0]
+def execute():
+	# reload gross profit report
+	from webnotes.modules import reload_doc
+	reload_doc('selling', 'search_criteria', 'gross_profit')
