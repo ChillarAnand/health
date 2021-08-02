@@ -14,7 +14,7 @@ with open('healthcare/__init__.py', 'rb') as f:
 		f.read().decode('utf-8')).group(1)))
 
 setup(
-	name='erpnext_healthcare',
+	name='healthcare',
 	version=version,
 	description='Open Source ERP Healthcare',
 	author='Frappe Technologies',
