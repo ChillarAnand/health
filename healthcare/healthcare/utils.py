@@ -10,9 +10,9 @@ from frappe import _
 from frappe.utils.formatters import format_value
 from frappe.utils import time_diff_in_hours, rounded
 from six import string_types
-from healthcare.doctype.healthcare_settings.healthcare_settings import get_income_account
-from healthcare.doctype.fee_validity.fee_validity import create_fee_validity
-from healthcare.doctype.lab_test.lab_test import create_multiple
+from healthcare.healthcare.doctype.healthcare_settings.healthcare_settings import get_income_account
+from healthcare.healthcare.doctype.fee_validity.fee_validity import create_fee_validity
+from healthcare.healthcare.doctype.lab_test.lab_test import create_multiple
 
 @frappe.whitelist()
 def get_healthcare_services_to_invoice(patient, company):
@@ -340,7 +340,7 @@ def get_service_item_and_practitioner_charge(doc):
 
 
 def get_appointment_type_service_item(appointment_type, department, is_inpatient):
-	from healthcare.doctype.appointment_type.appointment_type import get_service_item_based_on_department
+	from healthcare.healthcare.doctype.appointment_type.appointment_type import get_service_item_based_on_department
 
 	item_list = get_service_item_based_on_department(appointment_type, department)
 	service_item = None
@@ -717,3 +717,26 @@ def render_doc_as_html(doctype, docname, exclude_fields = []):
 		doc_html = "<div class='small'><div class='col-md-12 text-right'><a class='btn btn-default btn-xs' href='/app/Form/%s/%s'></a></div>" %(doctype, docname) + doc_html + '</div>'
 
 	return {'html': doc_html}
+
+
+def before_tests():
+	# complete setup if missing
+	from frappe.desk.page.setup_wizard.setup_wizard import setup_complete
+	if not frappe.get_list("Company"):
+		setup_complete({
+			"currency"          :"USD",
+			"full_name"         :"Test User",
+			"company_name"      :"Frappe Care LLC",
+			"timezone"          :"America/New_York",
+			"company_abbr"      :"WP",
+			"industry"          :"Healthcare",
+			"country"           :"United States",
+			"fy_start_date"     :"2021-01-01",
+			"fy_end_date"       :"2021-12-31",
+			"language"          :"english",
+			"company_tagline"   :"Testing",
+			"email"             :"test@erpnext.com",
+			"password"          :"test",
+			"chart_of_accounts" : "Standard",
+			"domains"           : ["Healthcare"],
+		})
