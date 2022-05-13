@@ -1,0 +1,64 @@
+{% extends "templates/web.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row" id="page-lab-test" data-path="lab-test" source-type="Generator" data-doctype="Web Form">
+        <div class="main-column col-sm-10">
+            <div class="page-content-wrapper">
+                <!-- breadcrumbs -->
+                <main class="container my-4">
+                    <div class="page_content">
+                        <div style="height: 3rem"></div>
+
+                        <!-- main card -->
+                        <div class="frappe-card list-card">
+
+                            <!-- list -->
+                            <div class="d-flex justify-content-between">
+                                <h3>Lab Test Reports</h3>
+                            </div>
+
+                            <div class="web-form-wrapper" data-web-form="lab-test-report"
+                                 data-web-form-doctype="Lab Test"
+                                 data-login-required="0" data-is-list="1" data-allow-delete="0"></div>
+                            <div id="list-filters" class="row mt-4"></div>
+                            <div id="list-table" class="list-table pt-4 overflow-auto">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Report Date</th>
+                                        <th>Test Name</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for lab_test in lab_tests %}
+                                    <tr style="cursor: pointer;">
+                                        <td>{{ lab_test.result_date }}</td>
+                                        <td><a href="/api/method/frappe.utils.print_format.download_pdf?doctype=Lab%20Test&name={{lab_test.name}}&format=Lab%20Test%20Print">{{ lab_test.lab_test_name }}</a></td>
+                                        <td>{{ lab_test.status }}</td>
+                                        <td></td>
+                                    </tr>
+
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="list-view-footer text-right"></div>
+
+                        </div>
+
+                        <div style="height: 3rem"></div>
+
+                    </div>
+                    <div class="page-footer"></div>
+                </main>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
