@@ -8,6 +8,10 @@ frappe.ui.form.on('Sales Invoice', {
 			frm.add_custom_button(__('Prescriptions'), function() {
 				get_drugs_to_invoice(frm);
 			},__('Get Items From'));
+			frm.add_custom_button(__('IP Prescriptions'), function() {
+				get_ip_drugs_to_invoice(frm);
+			},__('Get Items From'));
+
 		}
 	},
 
@@ -236,6 +240,72 @@ var get_drugs_to_invoice = function(frm) {
 		}
 		else if(!encounter){
 			selected_encounter = '';
+			$results.empty();
+			$results.append($placeholder);
+		}
+	}
+	$wrapper = dialog.fields_dict.results_area.$wrapper.append(`<div class="results"
+		style="border: 1px solid #d1d8dd; border-radius: 3px; height: 300px; overflow: auto;"></div>`);
+	$results = $wrapper.find('.results');
+	$placeholder = $(`<div class="multiselect-empty-state">
+				<span class="text-center" style="margin-top: -40px;">
+					<i class="fa fa-2x fa-heartbeat text-extra-muted"></i>
+					<p class="text-extra-muted">No Drug Prescription found</p>
+				</span>
+			</div>`);
+	$results.on('click', '.list-item--head :checkbox', (e) => {
+		$results.find('.list-item-container .list-row-check')
+			.prop("checked", ($(e.target).is(':checked')));
+	});
+	set_primary_action(frm, dialog, $results, false);
+	dialog.show();
+};
+
+
+var get_ip_drugs_to_invoice = function(frm) {
+	var me = this;
+	let selected_ip_record = '';
+	var dialog = new frappe.ui.Dialog({
+		title: __("Get Items from IP Prescriptions"),
+		fields:[
+			{ fieldtype: 'Link', options: 'Patient', label: 'Patient', fieldname: "patient", reqd: true },
+			{ fieldtype: 'Link', options: 'Inpatient Record', label: 'Inpatient Record', fieldname: "ip_record", reqd: true,
+				description:'Quantity will be calculated only for items which has "Nos" as UoM. You may change as required for each invoice item.',
+				get_query: function(doc) {
+					return {
+						filters: {
+							patient: dialog.get_value("patient"),
+							company: frm.doc.company,
+//							status: 'Discharge Scheduled'
+//						    'status': ['in', ['Disabled']}
+						    'status': ['!=', 'Discharged']
+
+						}
+					};
+				}
+			},
+			{ fieldtype: 'Section Break' },
+			{ fieldtype: 'HTML', fieldname: 'results_area' }
+		]
+	});
+	var $wrapper;
+	var $results;
+	var $placeholder;
+	dialog.set_values({
+		'patient': frm.doc.patient,
+		'ip_record': ""
+	});
+	dialog.fields_dict["ip_record"].df.onchange = () => {
+		var ip_record = dialog.fields_dict.ip_record.input.value;
+		if(ip_record && ip_record!=selected_ip_record){
+			selected_ip_record = ip_record;
+			var method = "healthcare.healthcare.utils.get_ip_drugs_to_invoice";
+			var args = {'inpatient_record_name': ip_record};
+			var columns = (["drug_code", "quantity", "description"]);
+			get_healthcare_items(frm, false, $results, $placeholder, method, args, columns);
+		}
+		else if(!ip_record){
+			selected_ip_record = '';
 			$results.empty();
 			$results.append($placeholder);
 		}

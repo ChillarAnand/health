@@ -308,33 +308,6 @@ def get_inpatient_services_to_invoice(patient, company):
 				}
 			)
 
-	inpatient_record = frappe.get_list(
-		'Inpatient Record',
-		filters=[
-			['patient', '=', patient.name],
-	 		['status', 'not in', ['Discharged']],
-		]
-	)
-	if inpatient_record:
-		inpatient_record = frappe.get_doc('Inpatient Record', inpatient_record[0].name)
-
-		for drug_line in inpatient_record.drug_prescription:
-			print(drug_line.drug_code)
-			print(drug_line)
-			if drug_line.drug_code:
-				qty = 1
-				if frappe.db.get_value("Item", drug_line.drug_code, "stock_uom") == "Nos":
-					qty = drug_line.get_quantity()
-
-				description = ""
-				if drug_line.dosage and drug_line.period:
-					description = _("{0} for {1}").format(drug_line.dosage, drug_line.period)
-
-				services_to_invoice.append(
-					{"drug_code": drug_line.drug_code, "quantity": qty, "description": description}
-				)
-
-
 	return services_to_invoice
 
 
@@ -679,6 +652,29 @@ def get_drugs_to_invoice(encounter):
 				return items_to_invoice
 			else:
 				validate_customer_created(patient)
+
+
+@frappe.whitelist()
+def get_ip_drugs_to_invoice(inpatient_record_name):
+	inpatient_record = frappe.get_doc('Inpatient Record', inpatient_record_name)
+	if not inpatient_record or not inpatient_record.drug_prescription:
+		return []
+
+	items_to_invoice = []
+	for drug_line in inpatient_record.drug_prescription:
+		if drug_line.drug_code:
+			qty = 1
+			if frappe.db.get_value("Item", drug_line.drug_code, "stock_uom") == "Nos":
+				qty = drug_line.get_quantity()
+
+			description = ""
+			if drug_line.dosage and drug_line.period:
+				description = _("{0} for {1}").format(drug_line.dosage, drug_line.period)
+
+			items_to_invoice.append(
+				{"drug_code": drug_line.drug_code, "quantity": qty, "description": description}
+			)
+			return items_to_invoice
 
 
 @frappe.whitelist()
