@@ -266,6 +266,7 @@ def get_pending_invoices(inpatient_record):
 	for doc in docs:
 		doc_name_list = get_unbilled_inpatient_docs(doc, inpatient_record)
 		if doc_name_list:
+			doc_name_list = [doc for doc in doc_name_list if not doc['name'].startswith('HLC-ENC-')]
 			pending_invoices = get_pending_doc(doc, doc_name_list, pending_invoices)
 
 	return pending_invoices
