@@ -34,6 +34,7 @@ def get_healthcare_services_to_invoice(patient, company):
 		items_to_invoice += get_inpatient_services_to_invoice(patient, company)
 		items_to_invoice += get_therapy_plans_to_invoice(patient, company)
 		items_to_invoice += get_therapy_sessions_to_invoice(patient, company)
+		# items_to_invoice += get_inpatient_services(patient, company)
 
 		return items_to_invoice
 
@@ -307,6 +308,33 @@ def get_inpatient_services_to_invoice(patient, company):
 				}
 			)
 
+	inpatient_record = frappe.get_list(
+		'Inpatient Record',
+		filters=[
+			['patient', '=', patient.name],
+	 		['status', 'not in', ['Discharged']],
+		]
+	)
+	if inpatient_record:
+		inpatient_record = frappe.get_doc('Inpatient Record', inpatient_record[0].name)
+
+		for drug_line in inpatient_record.drug_prescription:
+			print(drug_line.drug_code)
+			print(drug_line)
+			if drug_line.drug_code:
+				qty = 1
+				if frappe.db.get_value("Item", drug_line.drug_code, "stock_uom") == "Nos":
+					qty = drug_line.get_quantity()
+
+				description = ""
+				if drug_line.dosage and drug_line.period:
+					description = _("{0} for {1}").format(drug_line.dosage, drug_line.period)
+
+				services_to_invoice.append(
+					{"drug_code": drug_line.drug_code, "quantity": qty, "description": description}
+				)
+
+
 	return services_to_invoice
 
 
@@ -367,6 +395,28 @@ def get_therapy_sessions_to_invoice(patient, company):
 				)
 
 	return therapy_sessions_to_invoice
+
+
+def get_inpatient_services(patient, company):
+	services = []
+	filters = {
+		"patient": patient.name,
+		"invoiced": 0,
+		"company": company,
+	}
+	print(filters)
+
+	medications = frappe.get_list(
+		"Drug Prescription",
+		fields="*",
+		filters=filters,
+	)
+
+	services.append(medications)
+
+	print(services)
+
+	return services
 
 
 @frappe.whitelist()
